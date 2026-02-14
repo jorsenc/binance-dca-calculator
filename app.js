@@ -23,12 +23,10 @@ function calculateDCA(klines, amount, frequency) {
     let totalCoins = 0;
     const history = [];
 
-    // Reverse klines to go from oldest to newest if needed (Binance returns them in chronological order)
     klines.forEach((kline, index) => {
         const time = new Date(kline[0]).toLocaleDateString();
         const price = parseFloat(kline[4]); // Close price
 
-        // Apply DCA based on frequency
         if (index % frequency === 0) {
             totalInvested += amount;
             totalCoins += amount / price;
@@ -68,15 +66,24 @@ function updateUI(results) {
     roiElement.textContent = `${results.roi.toFixed(2)}%`;
     roiElement.className = `stat-value ${results.roi >= 0 ? 'success' : 'danger'}`;
 
+    // Add visual feedback to active stats
+    document.querySelectorAll('.stat-card').forEach(card => card.classList.add('active-stat'));
+
     updateChart(results.history);
 }
 
 function updateChart(history) {
-    const ctx = document.getElementById('dcaChart').getContext('2d');
+    const canvas = document.getElementById('dcaChart');
+    const ctx = canvas.getContext('2d');
 
     if (chart) {
         chart.destroy();
     }
+
+    // Create Gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(14, 203, 129, 0.2)');
+    gradient.addColorStop(1, 'rgba(14, 203, 129, 0)');
 
     const labels = history.map(h => h.time);
     const investedData = history.map(h => h.invested);
@@ -91,16 +98,22 @@ function updateChart(history) {
                     label: 'Portfolio Value',
                     data: valueData,
                     borderColor: '#0ecb81',
-                    backgroundColor: 'rgba(14, 203, 129, 0.1)',
+                    borderWidth: 3,
+                    backgroundColor: gradient,
                     fill: true,
                     tension: 0.4,
-                    pointRadius: 0
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#0ecb81',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
                 },
                 {
                     label: 'Total Invested',
                     data: investedData,
                     borderColor: '#F3BA2F',
-                    borderDash: [5, 5],
+                    borderWidth: 2,
+                    borderDash: [8, 4],
                     fill: false,
                     tension: 0,
                     pointRadius: 0
@@ -110,24 +123,54 @@ function updateChart(history) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
             plugins: {
                 legend: {
                     display: true,
-                    labels: { color: '#848e9c' }
+                    position: 'top',
+                    align: 'end',
+                    labels: {
+                        color: '#848e9c',
+                        font: { size: 12, weight: '600' },
+                        usePointStyle: true,
+                        padding: 20
+                    }
                 },
                 tooltip: {
-                    mode: 'index',
-                    intersect: false,
+                    backgroundColor: '#1e2329',
+                    titleColor: '#848e9c',
+                    bodyColor: '#fff',
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) { label += ': '; }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
                 }
             },
             scales: {
                 x: {
                     grid: { display: false },
-                    ticks: { color: '#848e9c', maxTicksLimit: 8 }
+                    ticks: { color: '#848e9c', maxTicksLimit: 10, font: { size: 11 } }
                 },
                 y: {
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                    ticks: { color: '#848e9c' }
+                    grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                    ticks: { 
+                        color: '#848e9c',
+                        font: { size: 11 },
+                        callback: function(value) { return '$' + value.toLocaleString(); }
+                    }
                 }
             }
         }
@@ -142,6 +185,7 @@ calculateBtn.addEventListener('click', async () => {
 
     loader.style.display = 'inline-block';
     calculateBtn.disabled = true;
+    calculateBtn.style.opacity = '0.7';
 
     const data = await fetchBinanceData(asset, duration);
     if (data) {
@@ -151,6 +195,7 @@ calculateBtn.addEventListener('click', async () => {
 
     loader.style.display = 'none';
     calculateBtn.disabled = false;
+    calculateBtn.style.opacity = '1';
 });
 
 // Initial calculation

@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binance DCA Calculator | Premium Crypto Tools</title>
-    <meta name="description" content="Calculate your Dollar Cost Averaging (DCA) returns with real-time Binance data. Mobile-friendly and modern design.">
+    <title>Binance DCA Dashboard | Professional Crypto Intelligence</title>
+    <meta name="description" content="Calculate your Dollar Cost Averaging (DCA) returns with real-time Binance data. Professional grade crypto analysis tool.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -15,12 +15,12 @@
     <div class="bg-gradient"></div>
     
     <header>
-        <h1>Binance DCA</h1>
-        <p>Optimize your crypto strategy with real historical data</p>
+        <h1>BINANCE DCA</h1>
+        <p>Premium strategy optimizer using live historical data from Binance API</p>
     </header>
 
     <main>
-        <section class="card">
+        <aside class="card">
             <div class="input-section">
                 <div class="input-group">
                     <label for="asset">Asset (USDT Pair)</label>
@@ -30,6 +30,8 @@
                         <option value="SOLUSDT">Solana (SOL)</option>
                         <option value="BNBUSDT">Binance Coin (BNB)</option>
                         <option value="ADAUSDT">Cardano (ADA)</option>
+                        <option value="DOTUSDT">Polkadot (DOT)</option>
+                        <option value="MATICUSDT">Polygon (MATIC)</option>
                     </select>
                 </div>
 
@@ -39,10 +41,11 @@
                 </div>
 
                 <div class="input-group">
-                    <label for="frequency">Frequency</label>
+                    <label for="frequency">Investment Frequency</label>
                     <select id="frequency">
                         <option value="1">Daily</option>
                         <option value="7" selected>Weekly</option>
+                        <option value="14">Bi-Weekly</option>
                         <option value="30">Monthly</option>
                     </select>
                 </div>
@@ -53,39 +56,48 @@
                 </div>
 
                 <button id="calculate-btn">
-                    Calculate ROI <span class="loader" id="loader"></span>
+                    Recalculate Strategy <span class="loader" id="loader"></span>
                 </button>
             </div>
-        </section>
+            <div style="margin-top: 2rem; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+                <p style="color: var(--text-muted); font-size: 0.75rem; line-height: 1.4;">
+                    * All data is fetched directly from Binance public API. ROI calculations are based on historical close prices.
+                </p>
+            </div>
+        </aside>
 
         <section class="results-container">
             <div class="stats-grid">
-                <div class="card stat-card">
+                <article class="card stat-card">
                     <div class="stat-label">Total Invested</div>
                     <div class="stat-value" id="total-invested">$0.00</div>
-                </div>
-                <div class="card stat-card">
+                </article>
+                <article class="card stat-card">
                     <div class="stat-label">Current Value</div>
                     <div class="stat-value" id="current-value">$0.00</div>
-                </div>
-                <div class="card stat-card">
-                    <div class="stat-label">Profit / Loss</div>
+                </article>
+                <article class="card stat-card">
+                    <div class="stat-label">Net Profit/Loss</div>
                     <div class="stat-value" id="profit-loss">$0.00</div>
-                </div>
-                <div class="card stat-card">
-                    <div class="stat-label">ROI %</div>
+                </article>
+                <article class="card stat-card">
+                    <div class="stat-label">Strategy ROI</div>
                     <div class="stat-value" id="roi-percent">0.00%</div>
-                </div>
+                </article>
             </div>
 
             <div class="card chart-card">
-                <div class="stat-label" style="text-align: left; margin-bottom: 1.5rem;">Performance Over Time</div>
+                <div class="stat-label" style="text-align: left; margin-bottom: 2rem; font-size: 0.9rem;">DCA Performance Visualization</div>
                 <div class="chart-container">
                     <canvas id="dcaChart"></canvas>
                 </div>
             </div>
         </section>
     </main>
+
+    <footer style="text-align: center; padding: 3rem; color: var(--text-muted); font-size: 0.85rem; opacity: 0.6;">
+        Built with Antigravity & Binance API | 2026
+    </footer>
 
     <script src="app.js"></script>
 </body>
